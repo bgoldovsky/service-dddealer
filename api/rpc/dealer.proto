@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "internal/generated/rpc";
+
+import "google/protobuf/wrappers.proto";
+
+service Dealer {
+  rpc CreateOrder (CreateOrderRequest) returns (CreateOrderReply) {} // Создать заказ
+  rpc ApplyTransition (ApplyTransitionRequest) returns (ApplyTransitionReply) {}  // Выполнить смену статуса заказа.
+}
+
+message CreateOrderRequest {
+  string workflow  = 1; // Тип сделки заказа
+  repeated ItemCreateRequest items = 2; // Список позиций в заказе
+}
+
+message ItemCreateRequest {
+  int64 id  = 1; // Уникальный идентификатор объявления
+  string name = 2; // Наименование товара
+  int64 seller_id = 3; // Идентификатор продавца
+  int64 price = 4; // Стоимость товара
+  optional google.protobuf.Int64Value discount = 5; // Скидка на товар
+}
+
+message CreateOrderReply {
+  int64 id = 1; // Уникальный идентификатор покупки
+  int64 created = 3; // Метка времени создания
+}
+
+message ApplyTransitionRequest {
+  int64 id = 1; // Уникальный идентификатор заказа по которому выполняется переход
+  string transition = 2; // Название перехода для текущего сценария
+}
+
+message ApplyTransitionReply {
+  bool success = 1; // Флаг успешность выполнения перехода
+}
