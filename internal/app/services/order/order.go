@@ -60,5 +60,14 @@ func (s *service) ApplyTransition(ctx context.Context, id order.ID, status strin
 		return fmt.Errorf("apply transaction. change state error: %v", err)
 	}
 
+	err = s.repo.Save(ctx, o)
+	if err != nil {
+		logger.Log.
+			WithError(err).
+			WithField("status", status).
+			Error("apply transaction: save error")
+		return fmt.Errorf("apply transaction. save error: %v", err)
+	}
+
 	return nil
 }

@@ -18,7 +18,7 @@ type Order struct {
 	Updated  time.Time
 }
 
-func New(status, workflow string, items []item.Item, now time.Time) (*Order, error) {
+func New(status, workflow string, items []item.Item, created time.Time) (*Order, error) {
 	if status == "" {
 		return nil, errors.New("order: status not specified")
 	}
@@ -36,8 +36,8 @@ func New(status, workflow string, items []item.Item, now time.Time) (*Order, err
 		Status:   status,
 		Workflow: workflow,
 		Items:    items,
-		Created:  now,
-		Updated:  now,
+		Created:  created,
+		Updated:  created,
 	}, nil
 }
 
@@ -49,16 +49,16 @@ func isCorrectWorkflow(workflow string) bool {
 	return true
 }
 
-func (r *Order) ApplyTransition(status string, now time.Time) error {
-	if isCorrectStatus(status) {
+func (r *Order) ApplyTransition(status string, updated time.Time) error {
+	if !isValidTransition(status) {
 		return errors.New("order: invalid transaction status")
 	}
 
 	r.Status = status
-	r.Updated = now
+	r.Updated = updated
 	return nil
 }
 
-func isCorrectStatus(status string) bool {
-	return status != "" && status != "created"
+func isValidTransition(status string) bool {
+	return status != "" && status != "new"
 }

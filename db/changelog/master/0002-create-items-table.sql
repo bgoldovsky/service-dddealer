@@ -4,6 +4,7 @@ create table if not exists items
 (
     id          bigserial primary key,
     --
+    order_id    bigint not null references orders (id) on delete cascade,
     seller_id   bigint not null,
     --
     price       int    not null,
@@ -14,8 +15,7 @@ create table if not exists items
     name        text   not null,
     --
     created_at  timestamp with time zone default now() not null,
-    updated_at  timestamp with time zone default now() not null,
-    deleted_at  timestamp with time zone default null
+    updated_at  timestamp with time zone default now() not null
 );
 
 create index on items (seller_id);

@@ -2,6 +2,9 @@ package dealer
 
 import (
 	"context"
+	"time"
+
+	"github.com/bgoldovsky/dealer/service-dealer/internal/app/logger"
 
 	"github.com/bgoldovsky/dealer/service-dealer/internal/app/models/order/item"
 
@@ -45,6 +48,7 @@ func (h *Handler) CreateOrder(ctx context.Context, req *rpc.CreateOrderRequest) 
 }
 
 func (h *Handler) ApplyTransition(ctx context.Context, req *rpc.ApplyTransitionRequest) (*rpc.ApplyTransitionReply, error) {
+	logger.Log.WithField("in", req).Info("REQ")
 	if req.Id == 0 {
 		return nil, status.Error(codes.InvalidArgument, "items id not specified")
 	}
@@ -59,6 +63,7 @@ func (h *Handler) ApplyTransition(ctx context.Context, req *rpc.ApplyTransitionR
 
 func toItems(req []*rpc.ItemCreateRequest) ([]item.Item, error) {
 	items := make([]item.Item, len(req))
+	now := time.Now()
 
 	for idx, val := range req {
 		var discount *int64
@@ -66,7 +71,7 @@ func toItems(req []*rpc.ItemCreateRequest) ([]item.Item, error) {
 			discount = &val.Discount.Value
 		}
 
-		i, err := item.New(item.ID(val.Id), val.SellerId, val.Price, discount, val.Name)
+		i, err := item.New(item.ID(val.Id), val.SellerId, val.Price, discount, val.Name, now)
 		if err != nil {
 			return nil, err
 		}
@@ -76,5 +81,3 @@ func toItems(req []*rpc.ItemCreateRequest) ([]item.Item, error) {
 
 	return items, nil
 }
-
-// &wrappers.StringValue{

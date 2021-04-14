@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/bgoldovsky/dealer/service-dealer/internal/app/logger"
-
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 

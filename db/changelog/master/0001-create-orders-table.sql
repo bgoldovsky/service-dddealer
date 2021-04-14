@@ -1,3 +1,7 @@
+-- drop table if exists items;
+-- drop table if exists orders;
+-- drop function if exists next_id();
+
 create sequence if not exists dealer_id_seq;
 
 create or replace function public.next_id(out result bigint) as
@@ -10,7 +14,7 @@ declare
 begin
     select nextval('public.dealer_id_seq') % 1024 into seq_id;
     select floor(extract(epoch from clock_timestamp()) * 1000) into now_millis;
-    result := (now_millis - our_epoch) << (61 - 42);
+    result := (now_millis - our_epoch) << (61 - 52);
     result := result | (shard_id << 9);
     result := result | (seq_id);
 end;

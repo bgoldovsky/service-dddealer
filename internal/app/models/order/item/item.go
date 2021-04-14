@@ -15,10 +15,9 @@ type Item struct {
 	Name     string
 	Created  time.Time
 	Updated  time.Time
-	Deleted  *time.Time
 }
 
-func New(itemID ID, sellerID int64, price int64, discount *int64, name string) (*Item, error) {
+func New(itemID ID, sellerID int64, price int64, discount *int64, name string, created time.Time) (*Item, error) {
 	if itemID <= 0 {
 		return nil, errors.New("item: itemID must be positive integer")
 	}
@@ -41,15 +40,7 @@ func New(itemID ID, sellerID int64, price int64, discount *int64, name string) (
 		Price:    price,
 		Discount: discount,
 		Name:     name,
+		Created:  created,
+		Updated:  created,
 	}, nil
-}
-
-func (r *Item) TotalCost() int64 {
-	price := r.Price
-
-	if r.Discount != nil && *r.Discount < price {
-		price = price - *r.Discount
-	}
-
-	return price
 }
